@@ -9,6 +9,8 @@ class WriteScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context); 
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Mis Historias"),
@@ -29,22 +31,20 @@ class WriteScreen extends StatelessWidget {
         child: Column(
           children: [
 
-
-            //Crear Historia
+            // Crear Historia
             ListTile(
               leading: const Icon(Icons.edit, color: Colors.white),
               title: const Text(
                 "Crear Historia",
                 style: TextStyle(color: Colors.white),
               ),
-              tileColor: const Color(0xFF283593),
+              tileColor: theme.primaryColor, 
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
               onTap: () => context.pushNamed(CrearHistoriaScreen.routeName),
             ),
 
             const SizedBox(height: 16),
-
 
             // Proyectos
             ListTile(
@@ -53,7 +53,7 @@ class WriteScreen extends StatelessWidget {
                 "Proyectos",
                 style: TextStyle(color: Colors.white),
               ),
-              tileColor: const Color(0xFF283593),
+              tileColor: theme.primaryColor,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
               onTap: () => context.pushNamed(ProyectosScreen.routeName),

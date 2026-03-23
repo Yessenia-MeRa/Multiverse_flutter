@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:login/providers/project_provider.dart';
 import 'package:login/screens/escribir_historia.dart';
 
@@ -19,38 +19,26 @@ class _CrearHistoriaScreenState extends State<CrearHistoriaScreen> {
 
   void _abrirEscribir(Map<String, dynamic> historia) {
     final provider = Provider.of<ProjectProvider>(context, listen: false);
-
     final index = provider.agregarProyecto(historia);
 
+   
     context.pushNamed(
       EscribirHistoriaScreen.routeName,
-      extra: index,
+      extra: {
+        'proyectoIndex': index,
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text("Nueva Historia"),
         centerTitle: true,
-        actions: [
-          TextButton(
-            onPressed: () {
-              final historiaPorDefecto = {
-                "titulo": "Nueva Historia",
-                "categoria": "",
-                "introduccion": "",
-                "capitulos": [],
-              };
-              _abrirEscribir(historiaPorDefecto);
-            },
-            child: const Text(
-              "Omitir",
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-            ),
-          ),
-        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -58,22 +46,30 @@ class _CrearHistoriaScreenState extends State<CrearHistoriaScreen> {
           children: [
             TextField(
               controller: _tituloController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: "Título",
                 filled: true,
-                fillColor: Color(0xFF283593),
-                labelStyle: TextStyle(color: Colors.white70),
+                fillColor: theme.cardColor,
+                labelStyle: const TextStyle(color: Colors.white70),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
               ),
               style: const TextStyle(color: Colors.white),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: _categoriaController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: "Categoría",
                 filled: true,
-                fillColor: Color(0xFF283593),
-                labelStyle: TextStyle(color: Colors.white70),
+                fillColor: theme.cardColor,
+                labelStyle: const TextStyle(color: Colors.white70),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
               ),
               style: const TextStyle(color: Colors.white),
             ),
@@ -81,11 +77,15 @@ class _CrearHistoriaScreenState extends State<CrearHistoriaScreen> {
             TextField(
               controller: _introduccionController,
               maxLines: 4,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: "Introducción",
                 filled: true,
-                fillColor: Color(0xFF283593),
-                labelStyle: TextStyle(color: Colors.white70),
+                fillColor: theme.cardColor,
+                labelStyle: const TextStyle(color: Colors.white70),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
               ),
               style: const TextStyle(color: Colors.white),
             ),
@@ -107,14 +107,14 @@ class _CrearHistoriaScreenState extends State<CrearHistoriaScreen> {
                   _abrirEscribir(nuevaHistoria);
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF283593),
+                  backgroundColor: const Color(0xFFD4AF37),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
                 ),
                 child: const Text(
                   "Crear Historia",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
                 ),
               ),
             ),

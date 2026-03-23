@@ -8,17 +8,20 @@ import '../../screens/profile_screen.dart';
 
 class CustomBottomNav extends StatelessWidget {
   final int currentIndex;
-
   const CustomBottomNav({super.key, required this.currentIndex});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return BottomNavigationBar(
       currentIndex: currentIndex,
       type: BottomNavigationBarType.fixed,
-      backgroundColor: const Color(0xFF0B1F4B),
-      selectedItemColor: Colors.white,
-      unselectedItemColor: Colors.white54,
+
+      backgroundColor: theme.bottomNavigationBarTheme.backgroundColor,
+      selectedItemColor: theme.primaryColor, 
+      unselectedItemColor: Colors.white70,
+
       onTap: (index) {
         switch (index) {
           case 0:
@@ -38,12 +41,28 @@ class CustomBottomNav extends StatelessWidget {
             break;
         }
       },
+
       items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: "Inicio"),
-        BottomNavigationBarItem(icon: Icon(Icons.search), label: "Buscar"),
-        BottomNavigationBarItem(icon: Icon(Icons.collections_bookmark), label: "Biblioteca"),
-        BottomNavigationBarItem(icon: Icon(Icons.create), label: "Escribir"),
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: "Perfil"),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: "Inicio",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.search),
+          label: "Buscar",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.collections_bookmark),
+          label: "Biblioteca",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.create),
+          label: "Escribir",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
+          label: "Perfil",
+        ),
       ],
     );
   }

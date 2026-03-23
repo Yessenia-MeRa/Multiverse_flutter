@@ -16,6 +16,8 @@ class NovelaCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return GestureDetector(
       onTap: onTap,
       child: SizedBox(
@@ -24,7 +26,6 @@ class NovelaCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
 
-            
             // IMAGEN
             Expanded(
               child: ClipRRect(
@@ -35,7 +36,7 @@ class NovelaCard extends StatelessWidget {
                   width: double.infinity,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
-                      color: Colors.grey[800],
+                      color: theme.cardColor, // 🔥 usa tu main
                       child: const Center(
                         child: Icon(
                           Icons.broken_image,
@@ -55,10 +56,10 @@ class NovelaCard extends StatelessWidget {
               titulo,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: Colors.white,
+              style: theme.textTheme.bodyMedium?.copyWith(
                 fontSize: grande ? 16 : 14,
                 fontWeight: FontWeight.w600,
+                color: Colors.white, // 🔥 consistente con tu app
               ),
             ),
           ],

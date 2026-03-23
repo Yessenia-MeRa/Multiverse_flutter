@@ -21,8 +21,6 @@ class ProyectosScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-
-
             context.goNamed(WriteScreen.routeName);
           },
         ),
@@ -53,7 +51,10 @@ class ProyectosScreen extends StatelessWidget {
                   leading: const Icon(Icons.folder, color: Colors.white),
                   onTap: () => context.pushNamed(
                     EscribirHistoriaScreen.routeName,
-                    extra: index, 
+                    extra: {
+                      'proyectoIndex': index,
+                      'proyecto': proyecto, // 🔥 Aquí enviamos el proyecto completo
+                    },
                   ),
                 );
               },
