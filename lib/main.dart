@@ -2,25 +2,38 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:login/providers/project_provider.dart';
 import 'package:login/core/routes/routes.dart';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
-void main() async {
+
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  try {
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+    }
+  } catch (e) {
+    debugPrint("Error al inicializar Firebase: $e");
+  }
 
-  runApp(
-    MultiProvider(
+  runApp(const AppProviders());
+}
+
+class AppProviders extends StatelessWidget {
+  const AppProviders({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ProjectProvider()),
       ],
       child: const MyApp(),
-    ),
-  );
+    );
+  }
 }
 
 class MyApp extends StatelessWidget {

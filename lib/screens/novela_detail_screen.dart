@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:login/core/data/novelas_data.dart';
 import 'package:login/core/data/library_data.dart';
 
 class NovelDetailScreen extends StatelessWidget {
   static const String routeName = "detail";
 
-  final Novela novela;
+  final Map<String, dynamic> historia;
 
-  const NovelDetailScreen({super.key, required this.novela});
+  const NovelDetailScreen({super.key, required this.historia});
 
   @override
   Widget build(BuildContext context) {
+    final capitulos = historia['capitulos'] as List<dynamic>? ?? [];
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Detalle de Novela"),
+        title: Text(historia['titulo'] ?? "Sin título"),
         backgroundColor: const Color(0xFF2C2C3E),
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
@@ -23,67 +24,58 @@ class NovelDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
-
-
             // Imagen
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
-              child: Image.network(
-                novela.imageUrl,
-                height: 300,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    height: 300,
-                    color: Colors.grey[800],
-                    child: const Center(
-                      child:
-                          Icon(Icons.broken_image, color: Colors.white, size: 50),
-                    ),
-                  );
-                },
-              ),
+              child: historia['imageUrl'] != null && historia['imageUrl'] != ""
+                  ? Image.network(
+                      historia['imageUrl'],
+                      height: 300,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return _placeholderImage();
+                      },
+                    )
+                  : _placeholderImage(),
             ),
             const SizedBox(height: 16),
 
             // Título
             Text(
-              novela.titulo,
+              historia['titulo'] ?? "Sin título",
               textAlign: TextAlign.center,
               style: const TextStyle(
                   fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white),
             ),
             const SizedBox(height: 8),
 
-
             // Categoría
             Text(
-              novela.categoria,
-              style: const TextStyle(color: Colors.white70, fontSize: 14),
+              historia['categoria'] ?? "Sin categoría",
               textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.white70, fontSize: 14),
             ),
             const SizedBox(height: 12),
 
             // Introducción
             Text(
-              novela.introduccion,
-              style: const TextStyle(color: Colors.white54, fontSize: 16),
+              historia['introduccion'] ?? "",
               textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.white54, fontSize: 16),
             ),
             const SizedBox(height: 16),
 
-            // BOTÓN TOGGLE GUARDAR/QUITAR BIBLIOTECA
+            // Botón agregar/quitar de biblioteca
             Center(
-              child: ValueListenableBuilder<List<Novela>>(
+              child: ValueListenableBuilder<List<Map<String, dynamic>>>(
                 valueListenable: LibraryData.favoritos,
                 builder: (context, favoritos, _) {
-                  final isFavorito = favoritos.contains(novela);
+                  final isFavorito = favoritos.contains(historia);
                   return ElevatedButton.icon(
                     onPressed: () {
                       if (isFavorito) {
-                        LibraryData.removeBook(novela);
+                        LibraryData.removeBook(historia);
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text("Eliminado de Biblioteca ❌"),
@@ -91,7 +83,7 @@ class NovelDetailScreen extends StatelessWidget {
                           ),
                         );
                       } else {
-                        LibraryData.addBook(novela);
+                        LibraryData.addBook(historia);
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text("Agregado a Biblioteca ✅"),
@@ -117,13 +109,13 @@ class NovelDetailScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // Capítulos
+            // Lista de capítulos
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: novela.capitulos.length,
+              itemCount: capitulos.length,
               itemBuilder: (context, index) {
-                final cap = novela.capitulos[index];
+                final cap = capitulos[index];
                 return Container(
                   margin: const EdgeInsets.symmetric(vertical: 4),
                   padding: const EdgeInsets.all(12),
@@ -141,7 +133,7 @@ class NovelDetailScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        cap["contenido"] ?? "",
+                        cap['contenido'] ?? "",
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(color: Colors.white70),
@@ -153,6 +145,16 @@ class NovelDetailScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _placeholderImage() {
+    return Container(
+      height: 300,
+      color: Colors.grey[800],
+      child: const Center(
+        child: Icon(Icons.broken_image, color: Colors.white, size: 50),
       ),
     );
   }

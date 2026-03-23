@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:login/core/data/novelas_data.dart';
 import 'package:login/core/widgets/novela_card.dart';
 import 'package:login/core/widgets/custom_bottom_nav.dart';
 import 'package:login/screens/home_screen.dart';
@@ -13,7 +12,11 @@ class LibraryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context); 
+
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor, 
+
       appBar: AppBar(
         title: const Text("Biblioteca"),
         centerTitle: true,
@@ -22,16 +25,19 @@ class LibraryScreen extends StatelessWidget {
           onPressed: () => context.goNamed(HomeScreen.routeName),
         ),
       ),
+
       body: Padding(
         padding: const EdgeInsets.all(12),
-        child: ValueListenableBuilder<List<Novela>>(
-          valueListenable: LibraryData.favoritos, 
+        child: ValueListenableBuilder<List<Map<String, dynamic>>>(
+          valueListenable: LibraryData.favoritos,
           builder: (context, favoritos, _) {
             if (favoritos.isEmpty) {
-              return const Center(
+              return Center(
                 child: Text(
                   "No tienes novelas en tu biblioteca",
-                  style: TextStyle(color: Colors.white70, fontSize: 16),
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: Colors.white70,
+                  ),
                 ),
               );
             }
@@ -46,9 +52,12 @@ class LibraryScreen extends StatelessWidget {
               ),
               itemBuilder: (context, index) {
                 final novela = favoritos[index];
+
+                final imageUrl = novela['imageUrl'] ?? '';
+
                 return NovelaCard(
-                  titulo: novela.titulo,
-                  imageUrl: novela.imageUrl,
+                  titulo: novela['titulo'] ?? 'Sin título',
+                  imageUrl: imageUrl,
                   onTap: () {
                     context.pushNamed(
                       NovelDetailScreen.routeName,
@@ -61,6 +70,7 @@ class LibraryScreen extends StatelessWidget {
           },
         ),
       ),
+
       bottomNavigationBar: const CustomBottomNav(currentIndex: 2),
     );
   }

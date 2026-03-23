@@ -1,20 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:login/core/data/novelas_data.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:login/screens/escribir_historia.dart';
 import 'package:login/screens/home_screen.dart';
 import 'package:login/screens/novela_detail_screen.dart';
+import 'package:login/screens/register_screen.dart';
 import 'package:login/screens/search_screen.dart';
 import 'package:login/screens/library_screen.dart';
 import 'package:login/screens/login_screen.dart';
 import 'package:login/screens/profile_screen.dart';
 import 'package:login/screens/write_screen.dart';
 import 'package:login/screens/crear_historia.dart';
-import 'package:login/screens/escribir_historia.dart';
 import 'package:login/screens/proyectos_screen.dart';
 import 'package:login/screens/splash_screen.dart';
 
 final GoRouter router = GoRouter(
   initialLocation: "/splash",
+
+  redirect: (context, state) {
+    final user = FirebaseAuth.instance.currentUser;
+
+    final goingToLogin = state.uri.path == "/login";
+    final goingToSplash = state.uri.path == "/splash";
+    final goingToRegister = state.uri.path == "/register";
+    if (goingToSplash || goingToRegister) return null;
+
+    if (user == null && !goingToLogin) {
+      return "/login";
+    }
+
+    if (user != null && goingToLogin) {
+      return "/";
+    }
+
+    return null;
+  },
+
   routes: [
     GoRoute(
       path: "/splash",
@@ -58,24 +79,31 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const CrearHistoriaScreen(),
     ),
 
+    // RUTA CORRECTA PARA ESCRIBIR HISTORIA
     GoRoute(
       path: "/escribir_historia",
       name: EscribirHistoriaScreen.routeName,
       builder: (context, state) {
         final extra = state.extra;
-        if (extra != null && extra is int) {
-          return EscribirHistoriaScreen(index: extra);
-        } else {
-          return Scaffold(
-            backgroundColor: const Color(0xFF0B1F4B),
-            body: const Center(
-              child: Text(
-                "No se encontró la historia",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
+
+        if (extra != null && extra is Map<String, dynamic>) {
+          final proyectoIndex = extra['proyectoIndex'] as int;
+          final capituloIndex = extra['capituloIndex'] as int?;
+          return EscribirHistoriaScreen(
+            proyectoIndex: proyectoIndex,
+            capituloIndex: capituloIndex,
           );
         }
+
+        return const Scaffold(
+          backgroundColor: Color(0xFF0B1F4B),
+          body: Center(
+            child: Text(
+              "No se encontró la historia",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        );
       },
     ),
 
@@ -96,19 +124,26 @@ final GoRouter router = GoRouter(
       name: NovelDetailScreen.routeName,
       builder: (context, state) {
         final data = state.extra;
-        if (data != null && data is Novela) {
-          return NovelDetailScreen(novela: data);
-        } else {
-          return const Scaffold(
-            body: Center(
-              child: Text(
-                "No se encontró la novela",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          );
+
+        if (data != null && data is Map<String, dynamic>) {
+          return NovelDetailScreen(historia: data);
         }
+
+        return const Scaffold(
+          body: Center(
+            child: Text(
+              "No se encontró la historia",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        );
       },
+    ),
+
+    GoRoute(
+      path: "/register",
+      name: RegisterScreen.routeName,
+      builder: (context, state) => const RegisterScreen(),
     ),
   ],
 );
